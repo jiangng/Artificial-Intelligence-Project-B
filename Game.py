@@ -15,16 +15,9 @@ from State import State
 from copy import deepcopy
 
 class Game:
-      
-    #def __init__(self, board):
-        
-    # start with making a minimax function and construct an eval function
-    # search for features
-    
+
     INFINITY = 123123123123
-    
-    
-    
+
     @staticmethod    
     def actions(state):
         list_actions = []
@@ -268,27 +261,7 @@ class Game:
                                   or closest_dist == dist):
                                 second_closest_dist = dist
                                 opp_assigned[SECOND_CLOSEST] = board.get_cell((i, j)).piece.piece_id
-                            
-                """           
-                for (key, white_stats) in white_dict.items():
-                    if (white_stats[IS_ALIVE] == DEAD):
-                        continue
-                    else:
-                        dist = manhattan_dist(white_stats[COORD], black_coord)
-                        if (dist < closest_dist):
-                            second_closest_dict = closest_dist
-                            whites_assigned[SECOND] = whites_assigned[CLOSEST_WHITE]
-                            closest_dist = dist
-                            whites_assigned[CLOSEST_WHITE] = key
-                        elif ((closest_dist < dist and dist < second_closest_dict) 
-                              or closest_dist == dist):
-                            second_closest_dict = dist
-                            whites_assigned[SECOND] = key
-                            
-                black_dict[black_id][WHITES_ASSIGNED] = whites_assigned
-                """
-                
-                
+             
                 # Calculate the TOTAL manhattan distances if 2 closest whites are found        
                 if (bool(opp_assigned[CLOSEST]) and bool(opp_assigned[SECOND_CLOSEST])):
                     total_dist = closest_dist + second_closest_dist
