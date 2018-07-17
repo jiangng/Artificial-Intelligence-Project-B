@@ -56,7 +56,6 @@ class Board:
         input: player's colour
         output: list of legitimate placing positions
         """
-
         
         my_off_rows = self.WHITE_OFF_ROWS if colour=='white' else self.BLACK_OFF_ROWS
         my_zone = list()
@@ -69,42 +68,6 @@ class Board:
                     my_zone.append((i, j))
                     
         return my_zone
-    
-    def player_place(self):
-        while (True):
-            rand_x = random.randint(0, 7)
-            rand_y = random.randint(0, 7)
-            
-            if (self.player_colour == "white"): 
-            
-                if (self.board[rand_x][rand_y].cell_type == Cell.MY_ZONE and self.board[rand_x][rand_y].is_empty()):
-                    self.curr_white_id += 1
-                    self.board[rand_x][rand_y].piece = Piece(rand_x, rand_y, (self.player_colour, self.curr_white_id), True)
-                    break
-            else:
-                if (self.board[rand_x][rand_y].cell_type == Cell.MY_ZONE and self.board[rand_x][rand_y].is_empty()):
-                    self.curr_black_id += 1
-                    self.board[rand_x][rand_y].piece = Piece(rand_x, rand_y, (self.player_colour, self.curr_black_id), True)
-                    break
-            
-        
-
-        return (rand_x, rand_y)
-    
-    def player_move(self):
-    
-        
-        for i in range(1, 13):
-            if (self.pick_player((self.player_colour, i)) is not None):
-                
-                coords = self.pick_player((self.player_colour, i))
-                #print((self.player_colour, i, coords))
-                possible_moves = self.possible_moves(coords)
-                if (bool(possible_moves)):
-                    #print((coords, possible_moves[0]))
-                    return (coords, possible_moves[0])
-            
-        return None
     
     def pick_player(self, piece_id):
         
@@ -151,12 +114,6 @@ class Board:
             if (self.get_cell(action).is_empty() and self.curr_black_id < self.MAX_PIECE):
                 self.curr_black_id += 1
                 self.get_cell(action).piece = Piece(piece_x, piece_y, ("black", self.curr_black_id), True)
-                        
-        
-        """if (self.board[piece_x][piece_y].is_empty() and self.curr_white_id < self.MAX_PIECE):
-            self.curr_white_id += 1 
-            self.board[piece_x][piece_y].piece = Piece(piece_x, piece_y, ("white", self.curr_white_id), True)
-        """ 
         
         piece_id = self.board[piece_x][piece_y].piece.piece_id
         self.turns.append(Turn(prev_turn.turn + 1, "place", action, piece_id))
@@ -180,11 +137,6 @@ class Board:
         temp_piece.x = new_x
         temp_piece.y = new_y
         self.get_cell(new_pos).piece = temp_piece
-        """
-        prev_turn = self.turns[-1]
-        piece_id = self.board[new_x][new_y].piece.piece_id
-        self.turns.append(Turn(prev_turn.turn + 1, "move", action, piece_id))
-        """
     
     def remove_pieces(self, coords_eliminated):
        
@@ -224,35 +176,6 @@ class Board:
         return self.piece_colour(coords) == colour or self.get_cell(coords).cell_type == Cell.CORNER
                 
     def surround_opponent(self, coords, coords_eliminated):
-        """
-        if (colour == "white"):
-            opp_colour = "black"
-        else:
-            opp_colour = "white"
-        
-        colour = self.board[x][y].piece.get_colour()
-        opp_colour = "white" if colour == "black" else "black"
-        
-        # check east
-        if (x + 1 < self.MAX_COL and self.is_enemy((x+1, y), opp_colour)):
-            if (x + 2 < self.MAX_COL and self.is_ally((x+2, y), colour)):
-                eliminate.append([x + 1, y])
-                
-        # check west
-        if (x - 1 >= self.MIN_COL and self.is_enemy((x-1, y), opp_colour)):
-            if (x - 2 > self.MIN_COL and self.is_ally((x-2, y), colour)):
-                eliminate.append([x - 1, y])    
-    
-        # check south
-        if (y + 1 < self.MAX_ROW and self.is_enemy((x, y+1), opp_colour)):
-            if (y + 2 < self.MAX_ROW and self.is_ally((x, y+2), colour)):
-                eliminate.append([x, y + 1])       
-                
-        # check north
-        if (y - 1 >= self.MIN_ROW and self.is_enemy((x, y-1), opp_colour)):
-            if (y - 2 >= self.MIN_ROW and self.is_ally((x, y-2), colour)):
-                eliminate.append([x, y - 1])    
-        """
         
         for coords in self.directions(coords).values():
             if (self.check_cell_valid(coords, (Cell.CORNER, ))):
