@@ -1,0 +1,104 @@
+Artificial Intelligence Project B
+Student Name and Number: 1. Huang Jiang Ng (789425)
+			 2. Xiang Yao Ng (779576)
+
+Modules
+Player: Compute the best action and update board from referee
+Board: Keeps a 2d-list of Cell objects that represents the 8x8 board
+       Stores methods such as updating the board configuration, elimination rules, 
+	computing possible legal moves, and etc
+Cell: Stores the information of a cell in the board such as the cell type and the Piece object
+      The type of the cell can be either corner, player's placing zone or shrunk zone
+Piece: Stores the information of a piece such as its colour
+State: Represents a state in a game
+       Contains information such as a Board object, max & min players' colours, 
+	number of turns into the moving phase, and the killer moves of this state sorted from best to worse.
+       A killer move is an action explored in previous iteration when iterative deepening search is called.
+       Contains an encapsulated class called Killer_Move, which represents a killer move containing its action 
+	and its evaluation score
+Game: Represents the game world in moving phase 
+      Stores the standard methods that evaluate a state such as actions(), result(), terminal_test(), 
+	utility() and the evaluation function
+PlacingStrategy: Strategy for Placing Phase
+MovingStrategy: Strategy for Moving Phase
+
+Extra module
+Baseline: Similar to Player class but performs random placing and random moving strategy to test our AI
+
+
+Placing Phase
+
+For this phase, we prioritise a very defensive strategy, which maximizes the survival of all player pieces before moving into the moving phase. The strategy 
+involves 3 steps:
+1. Check whether a player piece P1 may be eliminated
+2. Check whether the enemy piece E1 can be eliminated in return by placing 
+   another player piece P2. 
+3. Check whether P2 will be eliminated after placing at that position
+
+For the entire phase we repeatedly check every pieces to apply the defensive strategy. At the start of the phase, we place pieces along the border of the 
+enemy off-zone (right before the off-zone). This is done so that enemies will have a hard time sneaking at the back of the players' pieces while reducing the
+ number of directions for each pieces to pay attention to enemies. Then we start placing pieces adjacent to its ally. This keeps the pieces from scattering 
+ too far from each other and being eliminated. Overall its a very timid strategy that avoids enemy.
+
+
+Moving Phase
+
+For this phase, we implemented an alpha-beta cutoff search, complemented by:   
+	An evaluation function with 6 features and a list of appropriate weights
+	An iterative deepening search to optimise alpha-beta pruning by finding Killer Moves
+	Some heuristics to reduce the number of branches 
+
+
+Time Optimisation
+
+To reduce time taken to run the alpha beta search, we apply several heuristics into the search. The following are the heuristics explained. 
+
+1. We introduce Killer Move, a move which has higher evaluation score compared to other moves. The purpose is to maximise
+alpha-beta pruning by adjusting the ordering of possible actions. To find the Killer Moves, we implement an iterative 
+deepening search. Given a cutoff depth, we run the alpha beta search starting from cutoff depth equaling 1, then increase
+the cutoff depth by 1 and run the alpha beta search again. This process is repeated until the cutoff depth reaches the 
+given cutoff depth.
+
+In each alpha beta search, we keep only a few moves with the highest evaluation scores in each explored state for the next 
+alpha beta cutoff search and prune the rest in order to reduce the branching factor for each state. In the next alpha beta 
+cutoff search, instead of expanding all possible legal moves, only these few moves will be expanded in a descending order 
+based on their evaluation scores obtained earlier. For example, we have a root state/node A and check all moves from every 
+pieces (maximum of 4 moves per piece) and store them in a priority queue, which orders the queue in terms of each move's 
+evaluation score in descending order. Then we keep only say, the best 2 killer moves, and prune the remaining. Then we 
+only expand the 2 said moves in the next iteration. However, we are making the assumption that the evaluation scores of 
+the moves in a depth can reliably predict the evaluation scores in the next depth. 
+
+2. In the iterative deepening search, once a move by player piece results in the elimination of an enemy piece (after best move is determined by alpha beta 
+search), we break the loop and stop checking further depths. This results in massive reduction of time taken to output a move in one turn after an elimination 
+is found.  
+
+
+
+3. We introduce a threshold depth, where >= threshold we will further apply another heuristic, which is check surrounding enemy. This heuristic check for every
+ moves taken by a piece, whether there are enemies around the piece after move. Because only when a piece is near another opponent piece, significant events 
+ occur (eliminations). Hence we can further reduce the branching factor for each depth after threshold by not calculating the evaluation function for pieces 
+ that are not near to any opponent piece. We apply it both in max and min because max will have to watch out for min, in return we expect min to watch out for 
+ max in order to make rational and optimal moves.
+
+
+Performance Measure
+
+We manage to apply a 3-ply deep alpha beta search which will take around 20-30 second to best a very weak opponent strategy. If similar or better opponent 
+strategy is applied, we expected that our algorithm can run around 200 moves under 60 seconds. The memory limit is around 45-50Mb.
+
+The features of the evaluation function that we moves are as follows:
+
+1. f1 = number of player piece - number of enemy piece
+2. f2 = number of offensive positions that enemy can apply against player
+3. f3 = number of offensive positions that player can apply against enemy
+4. f4 = 2 closest player pieces against an enemy piece with manhattan distance of less than 4
+5. f5 = 2 closest enemy pieces against a player piece with manhattan distance of less than 4
+6. f6 = number of players within the expected 2nd shrinking board - number of players outside the 2nd shrinking board
+7. f7 = number of player piece which is at least near to 1 enemy
+
+We consider f1 to be the most important feature as we search for moves at higher depth, since we determined that a higher number of pieces that survive until 
+later stages of the game will have a higher chance of winning the game. f2 and f3 is used to check possible eliminations and to apply a defensive or attacking
+ strategy. f4 and f5 considers the enemy(player and opponent respectively) in its surrounding. f6 is used to consider the shrinking of boards, hence favouring 
+ inward moves within the expecting 2nd shrunk board (after 192 moves). f7 is used to reduce distance between enemy and player within certain range.
+
+
