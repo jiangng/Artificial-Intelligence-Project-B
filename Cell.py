@@ -10,8 +10,6 @@ class Cell:
     CORNER = 3
     
     def __init__(self, cell_type):
-        #self.x = x
-        #self.y = y
         self.cell_type = cell_type #my_zone, off_zone, shrunk_zone, corner
         self.piece = None
         
