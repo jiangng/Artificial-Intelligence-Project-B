@@ -43,8 +43,6 @@ class Player:
         if (self.player_colour == "white" and turns == 22) or (self.player_colour == "black" and turns == 23):
             self.isMovingPhase = True
         
-        
-        
         self.turns += 1
         
         print("action: ", action)
@@ -61,18 +59,5 @@ class Player:
         return action
         
     def update(self, action):
-        """
-        if type(action[0]) is int:
-            #place enemy piece
-            self.board.place(action, self.opponent_colour)
-            #check elimination
-            self.board.elimination(action)
-            
-        elif type(action[0]) is tuple:
-            #shift enemy piece to the new loc
-            self.board.shift(action)
-            #check elimination
-            self.board.elimination(action[Player.NEW_POS])
-        self.turns += 1
-        """
+
         self.board.update(action, self.opponent_colour)
