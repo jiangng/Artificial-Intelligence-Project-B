@@ -15,10 +15,10 @@ class Strategy:
     
     @classmethod
     def alphabeta_cutoff_search(self, state, game, eval_fn, d=1, cutoff_test=None):
-        """Search game to determine best action; use alpha-beta pruning.
-        This version cuts off search and uses an evaluation function."""
-    
-        
+        """
+        Search game to determine best action; use alpha-beta pruning.
+        This version cuts off search and uses an evaluation function.
+        """
     
         # Functions used by alphabeta
         def max_value(state, alpha, beta, depth):
@@ -26,15 +26,15 @@ class Strategy:
                 #state.board.debug_board()
                 self.num += 1
                 return eval_fn(state)
+            
             v = -self.INFINITY
             for a in game.actions(state):
-              
-              
                 v = max(v, min_value(game.result(state, a),
                                      alpha, beta, depth + 1))
                 if v >= beta:
                     return v
                 alpha = max(alpha, v)
+                
             return v
     
         def min_value(state, alpha, beta, depth):
@@ -42,6 +42,7 @@ class Strategy:
                 #state.board.debug_board()
                 self.num += 1
                 return eval_fn(state)
+            
             v = self.INFINITY
             for a in game.actions(state):
                 v = min(v, max_value(game.result(state, a),
@@ -49,6 +50,7 @@ class Strategy:
                 if v <= alpha:
                     return v
                 beta = min(beta, v)
+                
             return v
     
         # Body of alphabeta_cutoff_search starts here:
@@ -63,24 +65,10 @@ class Strategy:
         best_action = None
         for a in game.actions(state):
             v = min_value(game.result(state, a), best_score, beta, 1)
-            """
-            list_best_score = 
-            list_best_action = 
-            best_action = b
-            
-            new_state = game.result(state, b)
-            
-            for (a in game.actions(new_state):
-                
-            
-            """
             if v > best_score:
                 best_score = v
                 best_action = a
-                
-        #print(self.num)
-        #print(game.result(state, best_action).board.debug_board())
-        #print("best score = ", best_score)
+               
         return best_action
         
     @staticmethod
@@ -151,9 +139,6 @@ class Strategy:
                 # if i can't eliminate the enemy in return, then protect ally backside
                 else:
                     return Strategy.protect_ally(state, coord)
-            
-                
-                
                 
         return None
     
@@ -168,7 +153,6 @@ class Strategy:
         north_coords = coords_dict[Board.NORTH]
         south_coords = coords_dict[Board.SOUTH]
         
-        
         if (Strategy.cell_valid_not_empty(state, east_coords) and board.is_enemy(east_coords, oppo_colour)):
             return (Board.EAST, east_coords)
         
@@ -182,8 +166,6 @@ class Strategy:
             return (Board.NORTH, north_coords)
         
         return None
-    
-    
     
     @classmethod
     def protect_ally(Strategy, state, coord):
@@ -213,7 +195,6 @@ class Strategy:
     
     @classmethod
     def placing_def(Strategy, state):
-        
         """
             calculate strategy and then return action
         """
@@ -231,43 +212,7 @@ class Strategy:
                     if (board.get_cell(coord).piece.get_colour() == colour):
                         if (Strategy.defend_strategy(state, coord) is not None):
                             return Strategy.defend_strategy(state, coord)
-            
-                """
-                if (bool(board.enemy_place)):
-                    enemy_place = board.enemy_place
-                    
-                    coords_dict = board.directions(enemy_place)
-                    for coord in coords_dict.values():
-                        if (Strategy.cell_valid_not_empty(state, coord)):
-                            if (Strategy.defend_strategy(state, coord) is not None):
-                                return Strategy.defend_strategy(state, coord)
-                """
-        """
-        # first, check all pieces whether can attack or need defend
-        for i in range(Board.MAX_COL):
-            for j in range(Board.MAX_ROW):
-                if (self.board[i][j].piece is not None):
-                        if (self.board[i][j].piece.get_colour() == colour):
-                        # check existing player pieces whether they will be eliminated
-                        coord = (i, j)
-                        if (enemy_adjacent(state, coord) is not None):
-                            # if they will be eliminated, check whether we can eliminate the enemy instead
-                            enemy_coord = enemy_adjacent(state, coord)
-                            if (enemy_adjacent(state, enemy_coord) is not None):
-                                # if they can in turn eliminate the enemy, will they be eliminated in the process?
-                                ally_coord = enemy_adjacent(state, enemy_coord)
-                                if (enemy_adjacent(state, ally_coord) is not None):
-                                    continue
-                                
-                                else:
-                                    return ally_coord
-                            # if i can't eliminate the enemy in return, then protect ally backside
-                            else:
-                                return protect_ally(state, coord)
-        """
-        
-        
-                            
+                   
         # Second, try to place a piece along the border of enemy off-zone
         # at the middle 4 pieces
         border_row = 2 if (colour == "white") else 5
@@ -283,10 +228,6 @@ class Strategy:
                 # place piece in proxy cell then test strategy
                 if (not bool(coords_eliminated)):
                     return coord
-                
-                    
-                    
-                    
                     
         # Third, try to place adjacent to existing pieces
         risky_piece = []
@@ -356,6 +297,5 @@ class Strategy:
                     if (not bool(coords_eliminated)):
                         #print("coord5 = ", coord)
                         return coord
-        
-          
+           
         return None    
