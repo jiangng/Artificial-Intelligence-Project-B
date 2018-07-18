@@ -6,16 +6,17 @@ Created on 4 May 2018
 import queue as Q
 
 class State:
-    '''
-    classdocs
-    '''
-    
+
     class Best_Action:
         def __init__(self, state, action, eval_score):
             self.state = state
             self.action = action
             self.eval_score = eval_score #priority
+     
         def __gt__(self, other):
+            """
+            Compulsory function to use PriorityQueue with this class
+            """
             return self.eval_score < other.eval_score
     
     def __init__(self, board, max_colour, curr_move_colour, turns=None):
