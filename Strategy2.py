@@ -17,8 +17,10 @@ class Strategy2:
     
     @classmethod
     def alphabeta_cutoff_search(Strategy2, state, game, eval_fn, d, cutoff_test=None):
-        """Search game to determine best action; use alpha-beta pruning.
-        This version cuts off search and uses an evaluation function."""
+        """
+        Search game to determine best action; use alpha-beta pruning.
+        This version cuts off search and uses an evaluation function.
+        """
         # Functions used by alphabeta
         def max_value(state, alpha, beta, depth):
             if cutoff_test(state, depth):
